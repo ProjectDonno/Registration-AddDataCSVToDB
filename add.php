@@ -22,8 +22,14 @@
     */
 
     // главная функция, решает, что делать с поступившими данными
-    function addNewRecords($mysql,$userId, $code, $name, $price, $preview_text, $detail_text)
+    function addNewRecords($mysql,$userId, $list)
     {
+        $code = $list["code"];
+        $name = $list["name"];
+        $price = $list["price"];
+        $preview_text = $list["preview_text"];
+        $detail_text = $list["detail_text"];
+        
         // $mysql = new mysqli("localhost", "root", "root", "shop");
         // $mysql->query("SET NAMES 'utf8'");
 
@@ -72,6 +78,8 @@
         // подключение к бд
         $mysql = new mysqli("localhost", "root", "root", "shop");
         $mysql->query("SET NAMES 'utf8'");
+        // создаем ассоциативный массив
+        $list = array("code"=>"", "name"=>"", "price"=>"", "preview_text"=>"", "detail_text"=>"");
         // открываем файл, пропускаем первую строку, так как она содержить заголовки
         // и начинаем извлекать нужные данные
         if (($handle = fopen("temp/".$_FILES['file']['name'], "r")) !== FALSE) {
@@ -84,15 +92,15 @@
                         switch($i)
                         {
                             case 0: break;
-                            case 1: $code = $data[$i]; break;
-                            case 2: $name = $data[$i]; break;
-                            case 3: $price = $data[$i]; break;
-                            case 4: $preview_text = $data[$i]; break;
-                            case 5: $detail_text = $data[$i]; break;
+                            case 1: $list["code"] = $data[$i]; break;
+                            case 2: $list["name"] = $data[$i]; break;
+                            case 3: $list["price"] = $data[$i]; break;
+                            case 4: $list["preview_text"] = $data[$i]; break;
+                            case 5: $list["detail_text"] = $data[$i]; break;
                         }            
                     }
                     // вызываем функцию записи данных в бд
-                    addNewRecords($mysql, $_SESSION["user_id"], $code, $name, $price, $preview_text, $detail_text);
+                    addNewRecords($mysql, $_SESSION["user_id"], $list);
                     $row++;
                 } else {
                     $row++;
