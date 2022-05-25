@@ -55,7 +55,8 @@
     if(move_uploaded_file($_FILES['file']['tmp_name'], "temp/".$_FILES['file']['name'])) {
         $row = 1;
         // подключение к бд
-        $mysql = new mysqli("localhost", "root", "root", "shop");
+        include 'configDb.php';
+        $mysql = new mysqli($host, $log, $pass, $dbName);
         $mysql->query("SET NAMES 'utf8'");
         // создаем ассоциативный массив
         $list = array("code"=>"", "name"=>"", "price"=>"", "preview_text"=>"", "detail_text"=>"");
@@ -84,12 +85,12 @@
                     $row++;
                 }
             }
+            // закрывам бд
+            $mysql->close();
             // закрываем файл
             fclose($handle);
             // удаляем файл
             unlink("temp/".$_FILES['file']['name']);
-            // закрывам бд
-            $mysql->close();
 
             global $updateCounter;
             global $addCounter;
