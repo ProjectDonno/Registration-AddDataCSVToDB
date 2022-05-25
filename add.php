@@ -4,23 +4,6 @@
     $updateCounter = 0;
     $addCounter = 0;
 
-    /*
-    function printResults($result) {
-        if($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                echo "<b>ID:</b> ".$row['id'].". ";
-                echo "user_id: ".$row['user_id'].". ";
-                echo "code: ".$row['code'].". ";
-                echo "name: ".$row['name'].". ";
-                echo "price: ".$row['price'].". ";
-                echo "preview_text: ".$row['preview_text'].". ";
-                echo "detail_text: ".$row['detail_text'].'<br><br>';
-            }
-        }
-        echo "<hr>";
-    } 
-    */
-
     // главная функция, решает, что делать с поступившими данными
     function addNewRecords($mysql,$userId, $list)
     {
@@ -29,9 +12,6 @@
         $price = $list["price"];
         $preview_text = $list["preview_text"];
         $detail_text = $list["detail_text"];
-        
-        // $mysql = new mysqli("localhost", "root", "root", "shop");
-        // $mysql->query("SET NAMES 'utf8'");
 
         if(!($mysql->connect_error)) {
             // если превью описание пустое, то берём 30 символов из детального описания, 
@@ -69,7 +49,6 @@
             echo 'Error Number: '.$mysql->connect_errno.'<br/>';
             echo 'Error '.$mysql->connect_error;
         }
-        // $mysql->close();
     }
 
     // перемещаем выбранный файл в локальную папку "temp"
@@ -85,7 +64,6 @@
         if (($handle = fopen("temp/".$_FILES['file']['name'], "r")) !== FALSE) {
             while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
                 $num = count($data);
-
                 if($row !== 1)
                 {
                     for ($i=0; $i < $num; $i++) {
@@ -108,6 +86,8 @@
             }
             // закрываем файл
             fclose($handle);
+            // удаляем файл
+            unlink("temp/".$_FILES['file']['name']);
             // закрывам бд
             $mysql->close();
 
