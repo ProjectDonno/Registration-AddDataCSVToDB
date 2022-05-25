@@ -22,10 +22,10 @@
     */
 
     // главная функция, решает, что делать с поступившими данными
-    function addNewRecords($userId, $code, $name, $price, $preview_text, $detail_text)
+    function addNewRecords($mysql,$userId, $code, $name, $price, $preview_text, $detail_text)
     {
-        $mysql = new mysqli("localhost", "root", "root", "shop");
-        $mysql->query("SET NAMES 'utf8'");
+        // $mysql = new mysqli("localhost", "root", "root", "shop");
+        // $mysql->query("SET NAMES 'utf8'");
 
         if(!($mysql->connect_error)) {
             // если превью описание пустое, то берём 30 символов из детального описания, 
@@ -63,12 +63,15 @@
             echo 'Error Number: '.$mysql->connect_errno.'<br/>';
             echo 'Error '.$mysql->connect_error;
         }
-        $mysql->close();
+        // $mysql->close();
     }
 
     // перемещаем выбранный файл в локальную папку "temp"
     if(move_uploaded_file($_FILES['file']['tmp_name'], "temp/".$_FILES['file']['name'])) {
         $row = 1;
+        // подключение к бд
+        $mysql = new mysqli("localhost", "root", "root", "shop");
+        $mysql->query("SET NAMES 'utf8'");
         // открываем файл, пропускаем первую строку, так как она содержить заголовки
         // и начинаем извлекать нужные данные
         if (($handle = fopen("temp/".$_FILES['file']['name'], "r")) !== FALSE) {
@@ -89,7 +92,7 @@
                         }            
                     }
                     // вызываем функцию записи данных в бд
-                    addNewRecords($_SESSION["user_id"], $code, $name, $price, $preview_text, $detail_text);
+                    addNewRecords($mysql, $_SESSION["user_id"], $code, $name, $price, $preview_text, $detail_text);
                     $row++;
                 } else {
                     $row++;
@@ -97,6 +100,8 @@
             }
             // закрываем файл
             fclose($handle);
+            // закрывам бд
+            $mysql->close();
 
             global $updateCounter;
             global $addCounter;
